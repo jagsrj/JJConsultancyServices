@@ -1,176 +1,472 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>JJ Consultancy Services — Performance Engineering & Cloud Optimization</title>
-  <meta name="description" content="JJ Consultancy Services provides expert performance engineering, cloud optimization, and resilience testing for large-scale distributed systems." />
-  <meta name="robots" content="index,follow" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workout & Nutrition Tracker</title>
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="FitTracker">
+    <meta name="mobile-web-app-capable" content="yes">
+    
+    <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22Workout%20and%20Nutrition%22,%22short_name%22:%22FitTracker%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%23f8fafc%22,%22theme_color%22:%22%230f172a%22}">
 
-  <!-- Open Graph -->
-  <meta property="og:title" content="JJ Consultancy Services — Performance Engineering & Cloud Optimization" />
-  <meta property="og:description" content="20+ years of expertise in performance engineering, cloud tuning, and resilience testing for enterprise-scale systems." />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://yourdomain.example" />
-  <meta property="og:image" content="/og-image.png" />
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+            --success: #10b981;
+            --accent-purple: #7c3aed;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            padding: 20px 14px;
+            max-width: 800px;
+            margin: 0 auto;
+            padding-bottom: 100px;
+            user-select: none;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 15px;
+            margin-top: calc(env(safe-area-inset-top) + 5px);
+        }
+        header h1 {
+            font-size: 1.6rem;
+            color: #0f172a;
+        }
+        
+        /* Main Navigation (Workouts vs Nutrition) */
+        .main-nav {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+            background: #e2e8f0;
+            padding: 4px;
+            border-radius: 12px;
+        }
+        .nav-btn {
+            background: none;
+            border: none;
+            padding: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-light);
+            cursor: pointer;
+            border-radius: 9px;
+            transition: all 0.2s;
+        }
+        .nav-btn.active {
+            background: var(--card-bg);
+            color: #0f172a;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
 
-  <!-- Twitter -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="JJ Consultancy Services — Performance Engineering & Cloud Optimization" />
-  <meta name="twitter:description" content="20+ years of expertise in performance engineering, cloud tuning, and resilience testing for enterprise-scale systems." />
-  <meta name="twitter:image" content="/og-image.png" />
+        .timer-container {
+            background: #0f172a;
+            color: white;
+            border-radius: 14px;
+            padding: 14px;
+            text-align: center;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+        }
+        .timer-container:active { transform: scale(0.98); }
+        .timer-container.running { background: var(--primary); }
+        .timer-container.finished { background: var(--success); animation: pulse 1s infinite; }
+        #timer-display { font-size: 1.4rem; font-weight: bold; }
+        .timer-hint { font-size: 0.75rem; opacity: 0.8; margin-top: 2px; }
 
-  <!-- Schema.org JSON-LD -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "name": "JJ Consultancy Services",
-    "legalName": "1000341783 ONTARIO INC.",
-    "url": "https://yourdomain.example",
-    "email": "jagadish.rajasekar@gmail.com",
-    "telephone": "+1-437-264-2928",
-    "address": {
-      "@type": "PostalAddress",
-      "addressLocality": "Waterloo",
-      "addressRegion": "ON",
-      "addressCountry": "CA"
-    }
-  }
-  </script>
+        .tabs {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 8px;
+            margin-bottom: 22px;
+        }
+        @media (min-width: 600px) { .tabs { grid-template-columns: repeat(6, 1fr); } }
+        
+        .tab-btn {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            padding: 14px 4px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-light);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+        .tab-btn.active {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
+        }
+        
+        .page-view, .workout-day { display: none; }
+        .page-view.active, .workout-day.active { display: block; }
+        
+        .day-title {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: #0f172a;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 5px;
+        }
+        .exercise-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .exercise-card.completed {
+            opacity: 0.45;
+            background-color: #f1f5f9;
+        }
+        .exercise-info { display: flex; align-items: center; gap: 14px; flex: 1; cursor: pointer; }
+        .exercise-checkbox { width: 26px; height: 26px; accent-color: var(--primary); border-radius: 6px; }
+        .exercise-details h3 { font-size: 1.05rem; margin-bottom: 6px; color: #0f172a; }
+        .exercise-card.completed .exercise-details h3 { text-decoration: line-through; color: var(--text-light); }
+        
+        .meta-tags { display: flex; gap: 8px; font-size: 0.75rem; font-weight: 700; }
+        .tag-sets { background-color: #dbeafe; color: #1e40af; padding: 3px 8px; border-radius: 6px; }
+        .tag-reps { background-color: #fee2e2; color: #991b1b; padding: 3px 8px; border-radius: 6px; }
+        
+        .video-link {
+            display: inline-flex;
+            align-items: center;
+            background-color: #f1f5f9;
+            color: var(--text);
+            text-decoration: none;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border: 1px solid var(--border);
+        }
 
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    html { scroll-behavior: smooth; }
-    body { font-feature-settings: "liga" 1, "kern" 1; }
-  </style>
+        /* Nutrition Panel Styling */
+        .nutrition-section {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.01);
+        }
+        .nutrition-section h2 {
+            font-size: 1.25rem;
+            color: #0f172a;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .macro-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 10px;
+        }
+        .macro-card {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .macro-card:active { transform: scale(0.97); }
+        .macro-card h4 { font-size: 1rem; margin-bottom: 4px; }
+        
+        .responsive-img {
+            width: 100%;
+            border-radius: 10px;
+            margin-top: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .controls { margin-top: 35px; text-align: center; padding-bottom: env(safe-area-inset-bottom); }
+        .reset-btn { background-color: #ef4444; color: white; border: none; padding: 14px 28px; font-size: 0.95rem; font-weight: 600; border-radius: 10px; cursor: pointer; }
+
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
+    </style>
 </head>
-<body class="antialiased text-slate-800">
-  <header class="sticky top-0 z-30 bg-white/80 backdrop-blur border-b border-slate-200">
-    <div class="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between">
-      <a href="#home" class="font-semibold text-xl">JJ Consultancy <span class="text-slate-500">Services</span></a>
-      <nav class="hidden md:flex gap-6 text-sm">
-        <a href="#services" class="hover:text-indigo-600">Services</a>
-        <a href="#about" class="hover:text-indigo-600">About</a>
-        <a href="#contact" class="hover:text-indigo-600">Contact</a>
-      </nav>
-      <a href="#contact" class="ml-4 inline-flex items-center rounded-xl bg-indigo-600 px-4 py-2 text-white text-sm font-medium hover:bg-indigo-700">Get in touch</a>
-    </div>
-  </header>
+<body>
 
-  <section id="home" class="relative overflow-hidden">
-    <div class="mx-auto max-w-6xl px-4 py-20 md:py-28 grid md:grid-cols-2 gap-10 items-center">
-      <div>
-        <h1 class="text-3xl md:text-5xl font-bold leading-tight">Performance Engineering & Cloud Optimization for Modern Enterprises</h1>
-        <p class="mt-5 text-lg text-slate-600">With over 20 years of experience optimizing large-scale, distributed systems, we help organizations ensure reliability, scalability, and efficiency across cloud-native architectures on Azure and AWS.</p>
-        <div class="mt-7 flex gap-3">
-          <a href="#contact" class="rounded-xl bg-indigo-600 px-5 py-3 text-white font-medium hover:bg-indigo-700">Start a conversation</a>
-          <a href="#services" class="rounded-xl border border-slate-300 px-5 py-3 font-medium hover:border-slate-400">What we do</a>
-        </div>
-      </div>
-      <div class="relative">
-        <div class="aspect-[4/3] w-full rounded-2xl bg-gradient-to-br from-indigo-50 via-white to-indigo-100 border border-slate-200 p-6">
-          <ul class="grid grid-cols-2 gap-4 h-full">
-            <li class="rounded-xl border border-slate-200 p-4 bg-white"><p class="font-medium">Performance Engineering</p><p class="text-slate-600 text-sm mt-1">LoadRunner, JMeter, Dynatrace, Splunk, Datadog.</p></li>
-            <li class="rounded-xl border border-slate-200 p-4 bg-white"><p class="font-medium">DevOps & Resilience</p><p class="text-slate-600 text-sm mt-1">Cloud migrations, reliability drills, chaos testing.</p></li>
-            <li class="rounded-xl border border-slate-200 p-4 bg-white"><p class="font-medium">Database Tuning</p><p class="text-slate-600 text-sm mt-1">PostgreSQL, Oracle, MySQL, MongoDB, Cosmos DB.</p></li>
-            <li class="rounded-xl border border-slate-200 p-4 bg-white"><p class="font-medium">Cloud Platforms</p><p class="text-slate-600 text-sm mt-1">Azure & AWS optimization and cost management.</p></li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
+    <header>
+        <h1>🏋️ FitTracker Pro</h1>
+    </header>
 
-  <section id="services" class="bg-slate-50 border-t border-b border-slate-200">
-    <div class="mx-auto max-w-6xl px-4 py-16">
-      <h2 class="text-2xl md:text-3xl font-semibold">Services</h2>
-      <p class="mt-2 text-slate-600 max-w-3xl">Engagements include targeted assessments and ongoing retainers, delivering measurable performance improvements and cloud cost savings.</p>
-      <div class="mt-8 grid md:grid-cols-3 gap-6">
-        <div class="rounded-2xl border border-slate-200 bg-white p-6">
-          <h3 class="font-semibold">Performance Optimization</h3>
-          <ul class="mt-3 list-disc list-inside text-slate-600 text-sm space-y-1">
-            <li>Advanced load testing (LoadRunner, JMeter)</li>
-            <li>Micro-benchmarking & endurance testing</li>
-            <li>Distributed system tuning & bottleneck analysis</li>
-          </ul>
-        </div>
-        <div class="rounded-2xl border border-slate-200 bg-white p-6">
-          <h3 class="font-semibold">Cloud & DevOps</h3>
-          <ul class="mt-3 list-disc list-inside text-slate-600 text-sm space-y-1">
-            <li>Azure & AWS migration and scaling</li>
-            <li>CI/CD pipeline hardening & automation</li>
-            <li>Infrastructure as Code & cost optimization</li>
-          </ul>
-        </div>
-        <div class="rounded-2xl border border-slate-200 bg-white p-6">
-          <h3 class="font-semibold">Resilience & Chaos Engineering</h3>
-          <ul class="mt-3 list-disc list-inside text-slate-600 text-sm space-y-1">
-            <li>Chaos experiments & game days</li>
-            <li>Failure injection & recovery drills</li>
-            <li>Resilience patterns & capacity safeguards</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
+    <nav class="main-nav">
+        <button class="nav-btn active" id="btn-workout" onclick="showPage('workout')">💪 Workouts</button>
+        <button class="nav-btn" id="btn-nutrition" onclick="showPage('nutrition')">🥗 Nutrition</button>
+    </nav>
 
-  <section id="about">
-    <div class="mx-auto max-w-6xl px-4 py-16 grid md:grid-cols-2 gap-10 items-start">
-      <div>
-        <h2 class="text-2xl md:text-3xl font-semibold">About</h2>
-        <p class="mt-3 text-slate-700">JJ Consultancy Services is the operating name of <strong>1000341783 ONTARIO INC.</strong> Founded by Jagadish Rajasekar Janakiraman, a Performance Engineering Lead with over 20 years of experience optimizing large-scale distributed systems for Fortune 500 companies.</p>
-        <p class="mt-3 text-slate-600">Jagadish has led performance engineering for TD Bank and Kaiser Permanente, designed enterprise-scale testing frameworks, and spearheaded major cloud migrations on Azure and AWS.</p>
-        <p class="mt-3 text-slate-600">Certifications include PMP, Microsoft Azure Fundamentals, Certified SAFE Agilist, Certified Scrum Professional, Dynatrace Associate, Splunk User, ITIL Foundation, HP LoadRunner Specialist, and Sun Certified Java Programmer.</p>
-      </div>
-      <div class="rounded-2xl border border-slate-200 bg-white p-6">
-        <h3 class="font-semibold">Fast Facts</h3>
-        <ul class="mt-3 text-slate-600 text-sm space-y-2">
-          <li><span class="font-medium">Founded:</span> 2022 (Ontario)</li>
-          <li><span class="font-medium">Principal Consultant:</span> Jagadish Rajasekar Janakiraman</li>
-          <li><span class="font-medium">Core Skills:</span> LoadRunner, JMeter, Dynatrace, Splunk, Datadog</li>
-          <li><span class="font-medium">Databases:</span> PostgreSQL, Oracle, MySQL, MongoDB, Cosmos DB</li>
-          <li><span class="font-medium">Cloud Platforms:</span> Azure & AWS</li>
-        </ul>
-      </div>
-    </div>
-  </section>
-
-  <section id="contact" class="bg-white">
-    <div class="mx-auto max-w-6xl px-4 py-16">
-      <div class="rounded-2xl border border-slate-200 bg-slate-50 p-8">
-        <h2 class="text-2xl md:text-3xl font-semibold">Contact</h2>
-        <p class="mt-2 text-slate-600">Ready to discuss an engagement or need a quick assessment? Reach out and we’ll respond promptly.</p>
-        <div class="mt-6 grid md:grid-cols-3 gap-6">
-          <div class="col-span-2">
-            <form action="mailto:jagadish.rajasekar@gmail.com" method="post" enctype="text/plain" class="grid grid-cols-1 gap-4">
-              <input class="rounded-xl border border-slate-300 px-4 py-3" type="text" name="name" placeholder="Your name" required />
-              <input class="rounded-xl border border-slate-300 px-4 py-3" type="email" name="email" placeholder="Your email" required />
-              <textarea class="rounded-xl border border-slate-300 px-4 py-3" name="message" rows="4" placeholder="How can we help?" required></textarea>
-              <button class="inline-flex justify-center rounded-xl bg-indigo-600 px-5 py-3 text-white font-medium hover:bg-indigo-700" type="submit">Send email</button>
-            </form>
-            <p class="mt-3 text-xs text-slate-500">Alternatively, email us directly at <a class="underline" href="mailto:jagadish.rajasekar@gmail.com">jagadish.rajasekar@gmail.com</a>.</p>
-          </div>
-          <div class="space-y-2 text-sm text-slate-700">
-            <p><span class="font-medium">Phone:</span> <a class="underline" href="tel:+14372642928">+1 (437) 264‑2928</a></p>
-            <p><span class="font-medium">Location:</span> Waterloo, Ontario, Canada</p>
-            <p><span class="font-medium">Hours:</span> Mon–Fri, 9:00–17:00 ET</p>
-          </div>
+    <div id="page-workout" class="page-view active">
+        <div class="timer-container" id="timer-box" onclick="toggleTimer()">
+            <div id="timer-display">⏱️ Start 90s Rest Timer</div>
+            <div class="timer-hint" id="timer-hint">Tap after your set</div>
         </div>
-      </div>
-    </div>
-  </section>
 
-  <footer class="border-t border-slate-200">
-    <div class="mx-auto max-w-6xl px-4 py-8 text-sm text-slate-600">
-      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <p>© <span id="year"></span> JJ Consultancy Services. All rights reserved.</p>
-        <p class="max-w-xl"><strong>Legal:</strong> JJ Consultancy Services is the operating name of <strong>1000341783 ONTARIO INC.</strong> (Ontario, Canada). Where required, invoices and contracts will reference the legal entity name.</p>
-      </div>
-    </div>
-  </footer>
+        <div class="tabs" id="tabs-nav">
+            <button class="tab-btn" data-day="monday" onclick="switchDay('monday')">Mon</button>
+            <button class="tab-btn" data-day="tuesday" onclick="switchDay('tuesday')">Tue</button>
+            <button class="tab-btn" data-day="wednesday" onclick="switchDay('wednesday')">Wed</button>
+            <button class="tab-btn" data-day="thursday" onclick="switchDay('thursday')">Thu</button>
+            <button class="tab-btn" data-day="friday" onclick="switchDay('friday')">Fri</button>
+            <button class="tab-btn" data-day="saturday" onclick="switchDay('saturday')">Sat</button>
+        </div>
 
-  <script>
-    document.getElementById('year').textContent = new Date().getFullYear();
-  </script>
+        <div id="monday" class="workout-day">
+            <h2 class="day-title">Monday - Push Day A</h2>
+            <div class="exercise-card"><div class="exercise-info" onclick="handleCardClick(this)"><input type="checkbox" class="exercise-checkbox" onchange="toggleComplete(this)"><div class="exercise-details"><h3>Decline Bench Press</h3><div class="meta-tags"><span class="tag-sets">4 Sets</span><span class="tag-reps">8-10 Reps</span></div></div></div><a href="https://www.youtube.com/watch?v=LfyQBUKR8SE" target="_blank" class="video-link">🎬 Demo</a></div>
+            <div class="exercise-card"><div class="exercise-info" onclick="handleCardClick(this)"><input type="checkbox" class="exercise-checkbox" onchange="toggleComplete(this)"><div class="exercise-details"><h3>Incline Dumbbell Press</h3><div class="meta-tags"><span class="tag-sets">4 Sets</span><span class="tag-reps">8-10 Reps</span></div></div></div><a href="https://www.youtube.com/watch?v=8iPEnn-ltC8" target="_blank" class="video-link">🎬 Demo</a></div>
+            <div class="exercise-card"><div class="exercise-info" onclick="handleCardClick(this)"><input type="checkbox" class="exercise-checkbox" onchange="toggleComplete(this)"><div class="exercise-details"><h3>Cable Crossover</h3><div class="meta-tags"><span class="tag-sets">4 Sets</span><span class="tag-reps">8-10 Reps</span></div></div></div><a href="https://www.youtube.com/watch?v=Iwe6AmxVf7o" target="_blank" class="video-link">🎬 Demo</a></div>
+            <div class="exercise-card"><div class="exercise-info" onclick="handleCardClick(this)"><input type="checkbox" class="exercise-checkbox" onchange="toggleComplete(this)"><div class="exercise-details"><h3>Military Press</h3><div class="meta-tags"><span class="tag-sets">4 Sets</span><span class="tag-reps">8-10 Reps</span></div></div></div><a href="https://www.youtube.com/watch?v=2yjwXTZQDDI" target="_blank" class="video-link">🎬 Demo</a></div>
+            <div class="exercise-card"><div class="exercise-info" onclick="handleCardClick(this)"><input type="checkbox" class="exercise-checkbox" onchange="toggleComplete(this)"><div class="exercise-details"><h3>Lateral Raises</h3><div class="meta-tags"><span class="tag-sets">4 Sets</span><span class="tag-reps">8-10 Reps</span></div></div></div><a href="https://www.youtube.com/watch?v=3VcKaXpzqRo" target="_blank" class="video-link">🎬 Demo</a></div>
+        </div>
+
+        <div id="tuesday" class="workout-day">
+            <h2 class="day-title">Tuesday - Pull Day A</h2>
+            <div class="exercise-card"><div class="exercise-info" onclick="handleCardClick(this)"><input type="checkbox" class="exercise-checkbox" onchange="toggleComplete(this)"><div class="exercise-details"><h3>Lat Pulldown</h3><div class="meta-tags"><span class="tag-sets">4 Sets</span><span class="tag-reps">8-10 Reps</span></div></div></div><a href="https://www.youtube.com/watch?v=CAwf7n6Luuc" target="_blank" class="video-link">🎬 Demo</a></div>
+            <div class="exercise-card"><div class="exercise-info" onclick="handleCardClick(this)"><input type="checkbox" class="exercise-checkbox" onchange="toggleComplete(this)"><div class="exercise-details"><h3>Close Grip Pulldown</h3><div class="meta-tags"><span class="tag-sets">4 Sets</span><span class="tag-reps">8-10 Reps</span></div></div></div><a href="https://www.youtube.com/watch?v=GZbfZ03X9UM" target="_blank" class="video-link">🎬 Demo</a></div>
+            <div class="exercise-card"><div class="exercise-info" onclick="handleCardClick(this)"><input type="checkbox" class="exercise-checkbox" onchange="toggleComplete(this)"><div class="exercise-details"><h3>T-Bar Row</h3><div class="meta-tags"><span class="tag-sets">4 Sets</span><span class="tag-reps">8-10 Reps</span></div></div></div><a href="https://www.youtube.com/watch?v=j3Igk5nyZE4" target="_blank" class="video-link">🎬 Demo</a></div>
+            <div class="exercise-card"><div class="exercise-info" onclick="handleCardClick(this)"><input type="checkbox" class="exercise-checkbox" onchange="toggleComplete(this)"><div class="exercise-details"><h3>Barbell Shrugs</h3><div class="meta-tags"><span class="tag-sets">4 Sets</span><span class="tag-reps">8-10 Reps</span></div></div></div><a href="https://www.youtube.com/watch?v=AsAVbj7puKo" target="_blank" class="video-link">🎬 Demo</a></div>
+            <div class="exercise-card"><div class="exercise-info" onclick="handleCardClick(this)"><input type="checkbox" class="exercise-checkbox" onchange="toggleComplete(this)"><div class="exercise-details"><h3>Dumbbell Curls</h3><div class="meta-tags"><span class="tag-sets">4 Sets</span><span class="tag-reps">8-10 Reps</span></div></div></div><a href="https://www.youtube.com/watch?v=sAq_ocpRh_I" target="_blank" class="video-link">🎬 Demo</a></div>
+        </div>
+
+        <div id="wednesday" class="workout-day">
+            <h2 class="day-title">Wednesday - Leg Day A</h2>
+            <div class="exercise-card"><div class="exercise-info" onclick="handleCardClick(this)"><input type="checkbox" class="exercise-checkbox" onchange="toggleComplete(this)"><div class="exercise-details"><h3>Squats</h3><div class="meta-tags"><span class="tag-sets">5 Sets</span><span class="tag-reps">8-10 Reps</span></div></div></div><a href="https://www.youtube.com/watch?v=t2b8UdqmlFs" target="_blank" class="video-link">🎬 Demo</a></div>
+            <div class="exercise-card"><div class="exercise-info" onclick="handleCardClick(this)"><input type="checkbox" class="exercise-checkbox" onchange="toggleComplete(this)"><div class="exercise-details"><h3>Lunges</h3><div class="meta-tags"><span class="tag-sets">4 Sets</span><span class="tag-reps">8-10 Reps</span></div></div></div><a href="https://www.youtube.com/watch?v=QF0BQS2W80k" target="_blank" class="video-link">🎬 Demo</a></div>
+            <div class="exercise-card"><div class="exercise-info" onclick="handleCardClick(this)"><input type="checkbox" class="exercise-checkbox" onchange="toggleComplete(this)"><div class="exercise-details"><h3>Leg Press</h3><div class="meta-tags"><span class="tag-sets">4 Sets</span><span class="tag-reps">8-10 Reps</span></div></div></div><a href="https://www.youtube.com/watch?v=IZxyjWwAKcc" target="_blank" class="video-link">🎬 Demo</a></div>
+        </div>
+
+        <div id="thursday" class="workout-day">
+            <h2 class="day-title">Thursday - Push Day B</h2>
+            <div class="exercise-card"><div class="exercise-info" onclick="handleCardClick(this)"><input type="checkbox" class="exercise-checkbox" onchange="toggleComplete(this)"><div class="exercise-details"><h3>Flat Bench Press</h3><div class="meta-tags"><span class="tag-sets">4 Sets</span><span class="tag-reps">8-10 Reps</span></div></div></div><a href="https://www.youtube.com/watch?v=rT7DgCr-3pg" target="_blank" class="video-link">🎬 Demo</a></div>
+            <div class="exercise-card"><div class="exercise-info" onclick="handleCardClick(this)"><input type="checkbox" class="exercise-checkbox" onchange="toggleComplete(this)"><div class="exercise-details"><h3>Dumbbell Pullovers</h3><div class="meta-tags"><span class="tag-sets">4 Sets</span><span class="tag-reps">8-10 Reps</span></div></div></div><a href="https://www.youtube.com/watch?v=tpLnfSQJ0gg" target="_blank" class="video-link">🎬 Demo</a></div>
+        </div>
+
+        <div id="friday" class="workout-day">
+            <h2 class="day-title">Friday - Pull Day B</h2>
+            <div class="exercise-card"><div class="exercise-info" onclick="handleCardClick(this)"><input type="checkbox" class="exercise-checkbox" onchange="toggleComplete(this)"><div class="exercise-details"><h3>Barbell Row</h3><div class="meta-tags"><span class="tag-sets">4 Sets</span><span class="tag-reps">8-10 Reps</span></div></div></div><a href="https://www.youtube.com/watch?v=I0vbwZ7UXmE" target="_blank" class="video-link">🎬 Demo</a></div>
+            <div class="exercise-card"><div class="exercise-info" onclick="handleCardClick(this)"><input type="checkbox" class="exercise-checkbox" onchange="toggleComplete(this)"><div class="exercise-details"><h3>One-Arm Dumbbell Row</h3><div class="meta-tags"><span class="tag-sets">4 Sets</span><span class="tag-reps">8-10 Reps</span></div></div></div><a href="https://www.youtube.com/watch?v=dFzUjAs_XDY" target="_blank" class="video-link">🎬 Demo</a></div>
+        </div>
+
+        <div id="saturday" class="workout-day">
+            <h2 class="day-title">Saturday - Leg Day B</h2>
+            <div class="exercise-card"><div class="exercise-info" onclick="handleCardClick(this)"><input type="checkbox" class="exercise-checkbox" onchange="toggleComplete(this)"><div class="exercise-details"><h3>Front Squats</h3><div class="meta-tags"><span class="tag-sets">4 Sets</span><span class="tag-reps">8-10 Reps</span></div></div></div><a href="https://www.youtube.com/watch?v=v-mQm_vVug0" target="_blank" class="video-link">🎬 Demo</a></div>
+        </div>
+
+        <div class="controls">
+            <button class="reset-btn" onclick="clearProgress()">🔄 Reset All Progress</button>
+        </div>
+    </div>
+
+
+    <div id="page-nutrition" class="page-view">
+        
+        <div class="nutrition-section">
+            <h2>📅 Weekly Muscle Gain Schedule</h2>
+            <p style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 10px;">High protein & clean energy rotation schedule:</p>
+            <img src="IMG_2723.jpeg" alt="Weekly Meal Plan" class="responsive-img">
+        </div>
+
+        <div class="nutrition-section">
+            <h2>🥩 Whole Foods Nutrient Guides</h2>
+            <p style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 10px;">Select a core macro category to analyze high-quality food choices:</p>
+            
+            <div class="macro-grid">
+                <div class="macro-card" style="border-left: 4px solid #a855f7;" onclick="toggleMacroVisual('protein-view')">
+                    <h4>💪 Proteins</h4>
+                </div>
+                <div class="macro-card" style="border-left: 4px solid #3b82f6;" onclick="toggleMacroVisual('carbs-view')">
+                    <h4>⚡ Carbs</h4>
+                </div>
+                <div class="macro-card" style="border-left: 4px solid #eab308;" onclick="toggleMacroVisual('fats-view')">
+                    <h4>🧠 Fats</h4>
+                </div>
+                <div class="macro-card" style="border-left: 4px solid #10b981;" onclick="toggleMacroVisual('fiber-view')">
+                    <h4>🟢 Fiber</h4>
+                </div>
+            </div>
+
+            <div id="protein-view" class="macro-target" style="display:none; margin-top:15px; text-align:center;">
+                <strong style="color:var(--accent-purple)">Protein Reference:</strong>
+                <img src="IMG_2721.jpeg" alt="Protein Sources" class="responsive-img">
+            </div>
+            <div id="carbs-view" class="macro-target" style="display:none; margin-top:15px; text-align:center;">
+                <strong style="color:var(--primary)">Carbohydrate Reference:</strong>
+                <img src="IMG_2722.jpeg" alt="Carb Sources" class="responsive-img">
+            </div>
+            <div id="fats-view" class="macro-target" style="display:none; margin-top:15px; text-align:center;">
+                <strong style="color:#ca8a04">Healthy Fats Reference:</strong>
+                <img src="IMG_2724.jpeg" alt="Fat Sources" class="responsive-img">
+            </div>
+            <div id="fiber-view" class="macro-target" style="display:none; margin-top:15px; text-align:center;">
+                <strong style="color:var(--success)">Dietary Fiber Reference:</strong>
+                <img src="IMG_2725.jpeg" alt="Fiber Sources" class="responsive-img">
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        const STORAGE_KEY = 'workout_tracker_progress';
+        let timerInterval = null;
+        let timeRemaining = 90;
+
+        // Register PWA service worker fallback logic
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('data:text/javascript;base64,c2VsZi5hZGRFdmVudExpc3RlbmVyKCdmaXRjaCcsIGU9PihlLnJlc3BvbmRXaXRoKGZldGNoKGUucmVxdWVzdCkuY2F0Y2goKCk9Pm5ldyBSZXNwb25zZSgiT2Zmb OfflineZSIpKSkpKTs=');
+            });
+        }
+
+        // Main Navigation Controls
+        function showPage(pageId) {
+            document.querySelectorAll('.page-view').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            
+            document.getElementById(`page-${pageId}`).classList.add('active');
+            document.getElementById(`btn-${pageId}`).classList.add('active');
+        }
+
+        // Expandable Macros Dashboard Engine
+        function toggleMacroVisual(elementId) {
+            const block = document.getElementById(elementId);
+            const isCurrentlyOpen = block.style.display === 'block';
+            
+            // Close all first to keep layout clean
+            document.querySelectorAll('.macro-target').forEach(t => t.style.display = 'none');
+            
+            // If it wasn't open, open it now
+            if (!isCurrentlyOpen) {
+                block.style.display = 'block';
+                block.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }
+
+        function switchDay(dayId) {
+            document.querySelectorAll('.workout-day').forEach(day => day.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            const targetDay = document.getElementById(dayId);
+            if(targetDay) {
+                targetDay.classList.add('active');
+                const activeBtn = document.querySelector(`[data-day="${dayId}"]`);
+                if(activeBtn) activeBtn.classList.add('active');
+            }
+        }
+
+        function setAutomaticDay() {
+            const weekday = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
+            const currentDayString = weekday[new Date().getDay()];
+            switchDay(currentDayString === "sunday" ? "monday" : currentDayString);
+        }
+
+        function handleCardClick(infoDiv) {
+            if (event.target.tagName === 'INPUT') return;
+            const checkbox = infoDiv.querySelector('.exercise-checkbox');
+            checkbox.checked = !checkbox.checked;
+            toggleComplete(checkbox);
+        }
+
+        function toggleComplete(checkbox) {
+            const card = checkbox.closest('.exercise-card');
+            if (checkbox.checked) { card.classList.add('completed'); } 
+            else { card.classList.remove('completed'); }
+            saveProgress();
+        }
+
+        function saveProgress() {
+            const progress = {};
+            document.querySelectorAll('.exercise-checkbox').forEach((checkbox, index) => {
+                progress[index] = checkbox.checked;
+            });
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+        }
+
+        function loadProgress() {
+            const savedData = localStorage.getItem(STORAGE_KEY);
+            if (!savedData) return;
+            const progress = JSON.parse(savedData);
+            document.querySelectorAll('.exercise-checkbox').forEach((checkbox, index) => {
+                if (progress[index]) {
+                    checkbox.checked = true;
+                    checkbox.closest('.exercise-card').classList.add('completed');
+                }
+            });
+        }
+
+        function clearProgress() {
+            if(confirm("Are you sure you want to clear your tracking for the week?")) {
+                localStorage.removeItem(STORAGE_KEY);
+                document.querySelectorAll('.exercise-checkbox').forEach(cb => cb.checked = false);
+                document.querySelectorAll('.exercise-card').forEach(card => card.classList.remove('completed'));
+            }
+        }
+
+        function toggleTimer() {
+            const timerBox = document.getElementById('timer-box');
+            const timerDisplay = document.getElementById('timer-display');
+            const timerHint = document.getElementById('timer-hint');
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+                timeRemaining = 90;
+                timerBox.className = 'timer-container';
+                timerDisplay.innerText = '⏱️ Start 90s Rest Timer';
+                timerHint.innerText = 'Tap after your set';
+            } else {
+                timerBox.className = 'timer-container running';
+                timerHint.innerText = 'Tap to cancel/reset';
+                timerInterval = setInterval(() => {
+                    timeRemaining--;
+                    let mins = Math.floor(timeRemaining / 60);
+                    let secs = timeRemaining % 60;
+                    timerDisplay.innerText = `⏳ Rest: ${mins}:${secs < 10 ? '0' : ''}${secs}`;
+                    if (timeRemaining <= 0) {
+                        clearInterval(timerInterval);
+                        timerInterval = null;
+                        timeRemaining = 90;
+                        timerBox.className = 'timer-container finished';
+                        timerDisplay.innerText = '💪 Rest over! Next Set!';
+                        timerHint.innerText = 'Tap to restart timer';
+                        if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+                    }
+                }, 1000);
+            }
+        }
+
+        window.onload = function() {
+            loadProgress();
+            setAutomaticDay();
+        }
+    </script>
 </body>
 </html>
