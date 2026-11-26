@@ -43,7 +43,7 @@
         <a href="#expertise" class="transition hover:text-indigo-600">Expertise</a>
         <a href="#experience" class="transition hover:text-indigo-600">Experience</a>
         <a href="#tools" class="transition hover:text-indigo-600">Projects</a>
-        <a href="#demo" class="transition hover:text-indigo-600">Demo</a>
+        <a href="#demo" class="transition hover:text-indigo-600">Demos</a>
         <a href="#contact" class="transition hover:text-indigo-600">Contact</a>
       </nav>
       <a href="https://github.com/jagsrj" target="_blank" rel="noreferrer" class="rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700">GitHub</a>
@@ -66,7 +66,7 @@
 
           <div class="mt-8 flex flex-wrap gap-4">
             <a href="#tools" class="rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-indigo-700">See my projects</a>
-            <a href="#demo" class="rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:border-slate-400">Watch the demo</a>
+            <a href="#demo" class="rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-700 transition hover:border-slate-400">Watch the demos</a>
             <a href="Jagadish-Janakiraman-Performance-Engineering.pdf" target="_blank" rel="noopener" class="rounded-xl border border-indigo-200 bg-indigo-50 px-5 py-3 text-sm font-semibold text-indigo-700 transition hover:bg-indigo-100">Download resume (PDF)</a>
           </div>
 
@@ -350,7 +350,10 @@
             <li>• Runs faults under Performance Testing Framework load, with that run's SLO and Perf Insight verdicts in the report</li>
           </ul>
           <div class="mt-5 mb-6 flex flex-wrap gap-2"><span class="rounded-full border border-slate-300 bg-slate-50 px-3 py-1 text-xs font-medium text-slate-700">Node.js</span><span class="rounded-full border border-slate-300 bg-slate-50 px-3 py-1 text-xs font-medium text-slate-700">Kubernetes</span><span class="rounded-full border border-slate-300 bg-slate-50 px-3 py-1 text-xs font-medium text-slate-700">AKS</span><span class="rounded-full border border-slate-300 bg-slate-50 px-3 py-1 text-xs font-medium text-slate-700">Chaos Mesh</span><span class="rounded-full border border-slate-300 bg-slate-50 px-3 py-1 text-xs font-medium text-slate-700">YAML experiments</span><span class="rounded-full border border-slate-300 bg-slate-50 px-3 py-1 text-xs font-medium text-slate-700">GitHub Actions</span></div>
-          <a href="https://github.com/jagsrj/chaos-runner" target="_blank" rel="noreferrer" class="mt-auto inline-flex w-fit rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700">View on GitHub</a>
+          <div class="mt-auto flex flex-wrap gap-3">
+            <a href="#chaos-runner-demo" class="inline-flex w-fit rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700">▶ Watch the 90-second demo</a>
+            <a href="https://github.com/jagsrj/chaos-runner" target="_blank" rel="noreferrer" class="inline-flex w-fit rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700">View on GitHub</a>
+          </div>
         </div>
         <div class="flex flex-col rounded-3xl border border-slate-200 shadow-sm bg-white p-8">
           <p class="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-400">06 · Analyze &amp; gate</p>
@@ -383,6 +386,18 @@
           </div>
           <div class="overflow-hidden rounded-3xl border border-white/10 bg-black shadow-2xl">
             <video src="perf-insight-90s.mp4" poster="perf-insight-90s-poster.jpg" autoplay muted loop playsinline controls preload="metadata" style="display:block;width:100%;height:auto" aria-label="90-second demo of Perf Insight"></video>
+          </div>
+        </div>
+
+        <div id="chaos-runner-demo" class="mt-16 grid scroll-mt-24 items-center gap-10 border-t border-white/10 pt-16 lg:grid-cols-[0.8fr_1.2fr]">
+          <div>
+            <h2 class="text-3xl font-bold tracking-tight md:text-4xl">Chaos Runner in 90 seconds</h2>
+            <p class="mt-5 text-slate-300">A chaos experiment from start to finish: a YAML hypothesis, a run that kills checkout pods while probes watch, the report it writes, and a fragile service that trips the abort switch and gets rolled back. Narrated, with captions.</p>
+            <p class="mt-4 text-sm text-slate-400">Synthetic data. The runs use Chaos Runner&rsquo;s in-memory test cluster, not a live AKS environment.</p>
+            <a href="https://github.com/jagsrj/chaos-runner" target="_blank" rel="noreferrer" class="mt-6 inline-flex rounded-xl bg-white px-5 py-3 text-sm font-semibold text-slate-900 transition hover:bg-slate-200">Chaos Runner on GitHub</a>
+          </div>
+          <div class="overflow-hidden rounded-3xl border border-white/10 bg-black shadow-2xl">
+            <video src="chaos-runner-90s.mp4" poster="chaos-runner-90s-poster.jpg" playsinline controls preload="metadata" style="display:block;width:100%;height:auto" aria-label="90-second narrated demo of Chaos Runner"></video>
           </div>
         </div>
       </div>
